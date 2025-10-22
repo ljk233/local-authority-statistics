@@ -6,25 +6,24 @@ from functools import partial
 
 from loguru import logger
 
-from . import runner
 from .outcome import Outcome
 
 # Remove the default logger configuration
 logger.remove(0)
+
 # Configure the logger to output logs to stderr with a custom format
 logger.add(sys.stderr, format="{time} | {level} | {message}")
+
 # Add cumtom logging levels
 logger.level("SKIPPED", no=900, color="<yellow>")
 logger.level("FAILED", no=3901, color="<red>")
+
 # Register the levels
 log_levels = {
     Outcome.SUCCESS: logger.success,
     Outcome.SKIPPED: partial(logger.log, "SKIPPED"),
     Outcome.FAILED: partial(logger.log, "FAILED"),
 }
-
-
-# Custom formatting
 
 
 def log_starting_staging():
@@ -41,9 +40,10 @@ def log_outcome(outcome: Outcome, message: str) -> None:
 
 def log_staging_completed(outcomes: list[Outcome]) -> None:
     counter = Counter(outcome.value for outcome in outcomes)
-    fmt_count = f"{counter[Outcome.SUCCESS.value]} succeeded, {counter[Outcome.FAILED.value]} failed, {counter[Outcome.SKIPPED.value]} skipped"
+    # fmt_count = f"{counter[Outcome.SUCCESS.value]} succeeded, {counter[Outcome.FAILED.value]} failed, {counter[Outcome.SKIPPED.value]} skipped"
+    fmt_count = format_count(counter)
     logger.info(f"Pipeline finished: {fmt_count}")
-    pass
+    return
 
 
 def format_count(counter: Counter):
