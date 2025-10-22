@@ -2,21 +2,26 @@
 
 import importlib
 import pkgutil
-from typing import NamedTuple
+from pathlib import Path
+from typing import Callable, NamedTuple
+
+import polars as pl
+from pandera import polars as pa
 from loguru import logger
 
-from utils.types import DataFrameSchema, PipelineFn
+
+PipelineFn = Callable[[Path | str], pl.DataFrame]
 
 
 class StagingPipeline(NamedTuple):
     pipeline_fn: PipelineFn
-    data_schema: DataFrameSchema
+    stage_schema: pa.DataFrameSchema
 
 
 staging_pipelines: dict[str, StagingPipeline] = {}
 
 
-def register_staging_pipeline(file_hash: str, schema: DataFrameSchema):
+def register_staging_pipeline(file_hash: str, schema: pa.DataFrameSchema):
     def decorator(func):
         staging_pipelines[file_hash] = StagingPipeline(func, schema)
         return func
