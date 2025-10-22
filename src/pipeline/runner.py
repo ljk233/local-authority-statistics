@@ -40,8 +40,8 @@ def stage(file_path: Path, stage_dir_path: Path) -> tuple[Outcome, str]:
         staged_file_path = get_stage_file_path(file_hash, stage_dir_path)
         staging_pipeline = registry.staging_pipelines[file_hash]
         staged = run_staging_pipeline_func(file_path, staging_pipeline.pipeline_fn)
-        validated = staging_pipeline.data_schema.validate(staged)
-        validated.write_parquet(staged_file_path)
+        validated = staging_pipeline.stage_schema.validate(staged)
+        # validated.write_parquet(staged_file_path)
         return Outcome.SUCCESS, f"'{file_path.name}' -> '{staged_file_path.name}'"
     except IsADirectoryError as err:
         return (Outcome.SKIPPED, f"File '{file_path.name}' is a directory")
