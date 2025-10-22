@@ -3,8 +3,10 @@
 import hashlib
 import tomllib
 from pathlib import Path
+from typing import Any
 
-from .types import JsonLike
+
+JSONLike = dict[str, Any]
 
 
 def hash_file(path: Path | str, block_size: int = 8192) -> str:
@@ -17,7 +19,7 @@ def hash_file(path: Path | str, block_size: int = 8192) -> str:
     return h.hexdigest()
 
 
-def load_toml(file_path: Path | str) -> JsonLike:
+def load_toml(file_path: Path | str) -> JSONLike:
     path = Path(file_path)
     if not path.parts[-1].endswith("toml"):
         raise ValueError(f"File '{file_path}' is not a TOML file.")
